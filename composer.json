@@ -1,0 +1,46 @@
+{
+  "authors": [
+    {
+      "email": "codewithdinesh@gmail.com",
+      "name": "Dinesh Uprety"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "DineshUprety\\ZipBombGuard\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "DineshUprety\\ZipBombGuard\\Tests\\": "tests/"
+    }
+  },
+  "description": "Guard your Laravel app against zip bombs (decompression bombs) and zip-slip attacks: inspect any archive before you extract it.",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "DineshUprety\\ZipBombGuard\\ZipBombGuardServiceProvider"
+      ],
+      "aliases": {
+        "ZipBombGuard": "DineshUprety\\ZipBombGuard\\Facades\\ZipBombGuard"
+      }
+    }
+  },
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "name": "dineshuprety/laravel-zip-bomb-guard",
+  "require": {
+    "ext-zip": "*",
+    "illuminate/console": "^12.0|^13.0",
+    "illuminate/contracts": "^12.0|^13.0",
+    "illuminate/support": "^12.0|^13.0",
+    "illuminate/validation": "^12.0|^13.0",
+    "php": "^8.2",
+    "symfony/finder": "^6.4|^7.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^10.0|^11.0",
+    "phpunit/phpunit": "^11.0|^12.0"
+  },
+  "type": "library"
+}
