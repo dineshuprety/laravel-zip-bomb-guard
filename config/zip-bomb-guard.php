@@ -7,8 +7,8 @@ return [
     | Maximum total uncompressed size (bytes)
     |--------------------------------------------------------------------------
     |
-    | The sum of every entry's declared uncompressed size may not exceed this.
-    | A zip bomb announces itself here: 42 KB claiming to hold petabytes.
+    | Shared across the whole archive tree, including nested ZIP containers
+    | and their contents. Each top-level scan starts with a fresh budget.
     |
     */
     'max_total_bytes' => env('ZIP_BOMB_GUARD_MAX_BYTES', 100 * 1024 * 1024), // 100 MB
@@ -18,8 +18,7 @@ return [
     | Maximum entry count
     |--------------------------------------------------------------------------
     |
-    | Bombs need thousands of nested entries. Legitimate export bundles
-    | rarely need more than a few hundred.
+    | Shared across the whole archive tree, including nested archive entries.
     |
     */
     'max_files' => env('ZIP_BOMB_GUARD_MAX_FILES', 1000),

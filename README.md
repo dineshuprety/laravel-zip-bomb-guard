@@ -10,7 +10,7 @@ Use it to validate ZIP uploads, inspect export bundles, and extract archives in 
 
 ![Architecture](docs/architecture.png)
 
-Every entry point — an upload form, an export job, or a queue worker — passes through the same engine: `ArchiveSafetyChecker`. It checks entry metadata from the ZIP central directory. Recognized nested archives are decompressed to temporary files under a byte cap and checked recursively. The first failed check throws `UnsafeArchiveException`; archives deeper than the configured limit are rejected.
+Every entry point — an upload form, an export job, or a queue worker — passes through the same engine: `ArchiveSafetyChecker`. It checks entry metadata from the ZIP central directory and reads a short prefix of unencrypted files to recognize renamed ZIPs. Nested archives are decompressed to temporary files under the byte cap and checked recursively. File and byte budgets are shared across the entire archive tree and reset for each top-level scan. The first failed check throws `UnsafeArchiveException`; archives deeper than the configured limit are rejected.
 
 ---
 
@@ -21,11 +21,11 @@ Every entry point — an upload form, an export job, or a queue worker — passe
 
 ## Install
 
-Install directly from this GitHub repository until a stable release is registered on Packagist:
+Install the tagged release directly from this GitHub repository until the package is registered on Packagist:
 
 ```bash
 composer config repositories.zip-bomb-guard vcs https://github.com/dineshuprety/laravel-zip-bomb-guard
-composer require dineshuprety/laravel-zip-bomb-guard:dev-main
+composer require dineshuprety/laravel-zip-bomb-guard:^1.0
 ```
 
 The service provider and the `ZipBombGuard` facade auto-register. Optionally publish the config:
@@ -33,6 +33,8 @@ The service provider and the `ZipBombGuard` facade auto-register. Optionally pub
 ```bash
 php artisan vendor:publish --tag=zip-bomb-guard-config
 ```
+
+After Packagist registration, new projects can omit the `composer config repositories...` command.
 
 ---
 
@@ -138,8 +140,8 @@ Scans one archive or every `.zip`/`.jar`/`.war`/`.docx`/`.xlsx`/`.pptx` in a dir
 
 | Key | Default | Meaning |
 |---|---|---|
-| `max_total_bytes` | 100 MB | Sum of declared uncompressed sizes |
-| `max_files` | 1000 | Entry count ceiling |
+| `max_total_bytes` | 100 MB | Sum of declared uncompressed sizes across the entire nested tree, including ZIP container entries |
+| `max_files` | 1000 | Total entry count across the entire nested tree |
 | `max_ratio` | 20 | Uncompressed : compressed ratio per entry |
 | `max_nesting_depth` | 3 | Maximum nested depth; deeper archives are rejected (0 rejects all nested archives) |
 | `reject_encrypted` | true | Reject password-protected entries |
@@ -148,7 +150,9 @@ Scans one archive or every `.zip`/`.jar`/`.war`/`.docx`/`.xlsx`/`.pptx` in a dir
 
 Override per environment with `ZIP_BOMB_GUARD_MAX_BYTES`, `ZIP_BOMB_GUARD_MAX_FILES`, `ZIP_BOMB_GUARD_MAX_RATIO`, `ZIP_BOMB_GUARD_MAX_NESTING`, `ZIP_BOMB_GUARD_REJECT_ENCRYPTED`, `ZIP_BOMB_GUARD_REJECT_SYMLINKS`.
 
-Limits apply per archive, not to the aggregate work across the entire nested tree. Also enforce upload size limits and worker time, memory, and disk limits. Nested inspection recognizes `.zip`, `.jar`, `.war`, `.docx`, `.xlsx`, and `.pptx` by extension; renamed archives and other formats are not recursively inspected. A passing scan is not a malware verdict, and the extension blocklist does not cover every executable file type.
+For example, an outer ZIP containing two ZIPs with 10 files each consumes 22 entries. Its byte budget includes both inner ZIP files and their 20 decompressed entries. Nested streams cannot exceed their declared size. This makes the limits stricter than the initial development snapshot, which reset them per archive.
+
+Also enforce upload size limits and worker time, memory, and disk limits. Nested inspection recognizes `.zip`, `.jar`, `.war`, `.docx`, `.xlsx`, and `.pptx` by extension, plus renamed files beginning with a standard ZIP signature. Renamed self-extracting/prefixed ZIPs and other archive formats are not detected by the prefix check. Ordinary files are not fully decompressed during inspection, and encrypted content cannot be inspected if encrypted entries are explicitly allowed. A passing scan is not a malware verdict, and the extension blocklist does not cover every executable file type.
 
 ---
 
@@ -159,7 +163,7 @@ composer install
 vendor/bin/phpunit
 ```
 
-Tests cover safe and unsafe archives, size and compression limits, nesting limits, ZIP symlinks, duplicate filenames, blocked extensions, safe extraction, destination symlinks, overwrite protection, partial-file cleanup, Laravel configuration, validation rules, the facade, and the scan command. GitHub Actions tests Laravel 12 and 13 across supported PHP 8.2–8.5 combinations.
+Tests cover safe and unsafe archives, shared recursive budgets, renamed nested ZIPs, encrypted and malformed archives, size and compression limits, nesting limits, ZIP symlinks, duplicate filenames, blocked extensions, safe extraction, destination symlinks, overwrite protection, failed writes, temporary/partial-file cleanup, Laravel configuration, validation rules, the facade, and the scan command. GitHub Actions tests Laravel 12 and 13 across supported PHP 8.2–8.5 combinations and runs `composer audit`. Dependabot checks Composer dependencies and GitHub Actions weekly.
 
 ## License
 

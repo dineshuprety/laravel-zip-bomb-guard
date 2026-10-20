@@ -42,13 +42,21 @@ class ArchiveSafetyChecker
      */
     public function assertSafe(string $path, int $depth = 0): void
     {
-        if ($depth > $this->maxNestingDepth) {
+        $remainingBytes = $this->maxTotalBytes;
+        $remainingFiles = $this->maxFiles;
+
+        $this->scanArchive($path, $depth, $remainingBytes, $remainingFiles);
+    }
+
+    protected function scanArchive(string $path, int $depth, int &$remainingBytes, int &$remainingFiles): void
+    {
+        if ($depth < 0 || $depth > $this->maxNestingDepth) {
             throw new UnsafeArchiveException('Archive nesting depth exceeds the allowed limit.');
         }
 
         $zip = new ZipArchive;
 
-        if ($zip->open($path) !== true) {
+        if ($zip->open($path, ZipArchive::RDONLY | ZipArchive::CHECKCONS) !== true) {
             throw new UnsafeArchiveException('File is not a readable zip archive.');
         }
 
@@ -59,11 +67,11 @@ class ArchiveSafetyChecker
                 throw new UnsafeArchiveException('Archive is empty.');
             }
 
-            if ($count > $this->maxFiles) {
-                throw new UnsafeArchiveException("Archive has too many entries ({$count}).");
+            if ($count > $remainingFiles) {
+                throw new UnsafeArchiveException('Archive tree has too many entries.');
             }
 
-            $total = 0;
+            $remainingFiles -= $count;
             $seen = [];
 
             for ($i = 0; $i < $count; $i++) {
@@ -111,12 +119,13 @@ class ArchiveSafetyChecker
                     throw new UnsafeArchiveException("Blocked file type in archive: {$name}");
                 }
 
-                $total += (int) $stat['size'];
+                $size = (int) $stat['size'];
 
                 // 6. Total uncompressed size ceiling — a bomb announces itself here.
-                if ($total > $this->maxTotalBytes) {
+                if ($size < 0 || $size > $remainingBytes) {
                     throw new UnsafeArchiveException('Archive uncompressed size exceeds the allowed limit.');
                 }
+                $remainingBytes -= $size;
 
                 // 7. Decompression-bomb heuristic: a legitimate file rarely
                 //    compresses better than ~20:1. A 42.zip-style bomb is ~10^6:1.
@@ -127,11 +136,16 @@ class ArchiveSafetyChecker
 
                 // 8. Recursive check: a nested archive gets the same treatment,
                 //    streamed to temp under the byte cap before inspection.
-                if (in_array($ext, $this->nestedArchiveExtensions, true)) {
+                $nested = in_array($ext, $this->nestedArchiveExtensions, true);
+                if (! $nested && $size >= 4 && ($stat['encryption_method'] ?? 0) === 0) {
+                    $nested = $this->hasZipSignature($zip, $name);
+                }
+
+                if ($nested) {
                     if ($depth >= $this->maxNestingDepth) {
                         throw new UnsafeArchiveException('Archive nesting depth exceeds the allowed limit.');
                     }
-                    $this->assertNestedSafe($zip, $name, $depth + 1);
+                    $this->assertNestedSafe($zip, $name, $depth + 1, $size, $remainingBytes, $remainingFiles);
                 }
             }
         } finally {
@@ -159,8 +173,14 @@ class ArchiveSafetyChecker
      *
      * @throws UnsafeArchiveException
      */
-    protected function assertNestedSafe(ZipArchive $zip, string $entryName, int $depth): void
-    {
+    protected function assertNestedSafe(
+        ZipArchive $zip,
+        string $entryName,
+        int $depth,
+        int $declaredSize,
+        int &$remainingBytes,
+        int &$remainingFiles,
+    ): void {
         $stream = $zip->getStream($entryName);
 
         if ($stream === false) {
@@ -186,7 +206,7 @@ class ArchiveSafetyChecker
             $written = 0;
 
             while (! feof($stream)) {
-                $chunk = fread($stream, 8192);
+                $chunk = @fread($stream, 8192);
 
                 if ($chunk === false || ($chunk === '' && ! feof($stream))) {
                     throw new UnsafeArchiveException("Could not read nested archive: {$entryName}");
@@ -194,11 +214,11 @@ class ArchiveSafetyChecker
 
                 $written += strlen($chunk);
 
-                if ($written > $this->maxTotalBytes) {
+                if ($written > $declaredSize) {
                     throw new UnsafeArchiveException("Nested archive exceeds the safe size limit: {$entryName}");
                 }
 
-                if (fwrite($handle, $chunk) !== strlen($chunk)) {
+                if (@fwrite($handle, $chunk) !== strlen($chunk)) {
                     throw new UnsafeArchiveException('Could not write temporary file for nested archive check.');
                 }
             }
@@ -206,7 +226,11 @@ class ArchiveSafetyChecker
             fclose($stream);
             fclose($handle);
 
-            $this->assertSafe($temp, $depth);
+            if ($written !== $declaredSize) {
+                throw new UnsafeArchiveException("Nested archive size does not match its metadata: {$entryName}");
+            }
+
+            $this->scanArchive($temp, $depth, $remainingBytes, $remainingFiles);
         } finally {
             if (is_resource($stream)) {
                 fclose($stream);
@@ -215,6 +239,26 @@ class ArchiveSafetyChecker
                 fclose($handle);
             }
             @unlink($temp);
+        }
+    }
+
+    protected function hasZipSignature(ZipArchive $zip, string $name): bool
+    {
+        $stream = $zip->getStream($name);
+        if ($stream === false) {
+            throw new UnsafeArchiveException("Could not read archive entry: {$name}");
+        }
+
+        try {
+            $signature = @fread($stream, 4);
+            if ($signature === false || strlen($signature) !== 4) {
+                throw new UnsafeArchiveException("Could not read archive entry: {$name}");
+            }
+
+            // shortcut: only leading signatures are checked; extend detection for prefixed/self-extracting ZIPs.
+            return in_array($signature, ["PK\x03\x04", "PK\x05\x06", "PK\x07\x08"], true);
+        } finally {
+            fclose($stream);
         }
     }
 

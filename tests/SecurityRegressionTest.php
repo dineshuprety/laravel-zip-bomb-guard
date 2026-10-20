@@ -8,6 +8,8 @@ use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
 use DineshUprety\ZipBombGuard\Rules\NoZipBomb;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use ZipArchive;
 
 class SecurityRegressionTest extends TestCase
@@ -164,6 +166,132 @@ class SecurityRegressionTest extends TestCase
         foreach ([123, true, ['file'], new \stdClass] as $value) {
             $validator = Validator::make(['archive' => $value], ['archive' => [new NoZipBomb]]);
             $this->assertTrue($validator->fails());
+        }
+    }
+
+    public function test_file_budget_is_shared_across_sibling_archives(): void
+    {
+        $inner = $this->safeZip($this->directory.'/inner.zip');
+        $outer = $this->makeZip($this->directory.'/outer.zip', function (ZipArchive $zip) use ($inner) {
+            $zip->addFile($inner, 'one.zip');
+            $zip->addFile($inner, 'two.zip');
+        });
+
+        $this->assertTrue((new ArchiveSafetyChecker(maxFiles: 4))->isSafe($outer));
+        $checker = new ArchiveSafetyChecker(maxFiles: 3);
+        $this->assertFalse($checker->isSafe($outer));
+        $this->assertTrue($checker->isSafe($inner), 'A failed scan must not consume the next scan budget.');
+    }
+
+    public function test_byte_budget_is_shared_across_sibling_archives(): void
+    {
+        $payload = random_bytes(256);
+        $inner = $this->makeZip($this->directory.'/inner.zip', function (ZipArchive $zip) use ($payload) {
+            $zip->addFromString('data.bin', $payload);
+        });
+        $outer = $this->makeZip($this->directory.'/outer.zip', function (ZipArchive $zip) use ($inner) {
+            $zip->addFile($inner, 'one.zip');
+            $zip->addFile($inner, 'two.zip');
+        });
+        $total = 2 * (filesize($inner) + strlen($payload));
+
+        $checker = new ArchiveSafetyChecker(maxTotalBytes: $total);
+        $this->assertTrue($checker->isSafe($outer));
+        $this->assertTrue($checker->isSafe($outer), 'Each top-level scan gets a fresh budget.');
+        $this->assertFalse((new ArchiveSafetyChecker(maxTotalBytes: $total - 1))->isSafe($outer));
+    }
+
+    public function test_rejects_blocked_files_in_renamed_nested_archives(): void
+    {
+        $inner = $this->makeZip($this->directory.'/inner.zip', function (ZipArchive $zip) {
+            $zip->addFromString('shell.php', '<?php echo "blocked";');
+        });
+
+        foreach (['payload.bin', 'payload'] as $name) {
+            $outer = $this->makeZip($this->directory.'/outer.zip', function (ZipArchive $zip) use ($inner, $name) {
+                $zip->addFile($inner, $name);
+            });
+            $this->assertFalse((new ArchiveSafetyChecker)->isSafe($outer), $name);
+        }
+    }
+
+    public function test_renamed_nested_archives_obey_depth_and_file_limits(): void
+    {
+        $inner = $this->safeZip($this->directory.'/inner.zip');
+        $outer = $this->makeZip($this->directory.'/outer.zip', function (ZipArchive $zip) use ($inner) {
+            $zip->addFile($inner, 'payload.bin');
+        });
+
+        $this->assertTrue((new ArchiveSafetyChecker)->isSafe($outer));
+        $this->assertFalse((new ArchiveSafetyChecker(maxNestingDepth: 0))->isSafe($outer));
+        $this->assertFalse((new ArchiveSafetyChecker(maxFiles: 1))->isSafe($outer));
+    }
+
+    public function test_rejects_encrypted_entries_by_default(): void
+    {
+        $path = $this->makeZip($this->directory.'/encrypted.zip', function (ZipArchive $zip) {
+            $zip->addFromString('secret.txt', 'test fixture');
+            $this->assertTrue($zip->setEncryptionName('secret.txt', ZipArchive::EM_AES_256, 'fixture-only'));
+        });
+
+        $this->assertTrue((new ArchiveSafetyChecker(rejectEncrypted: false))->isSafe($path));
+        $this->expectException(UnsafeArchiveException::class);
+        $this->expectExceptionMessage('Encrypted entry');
+        (new ArchiveSafetyChecker)->assertSafe($path);
+    }
+
+    public function test_rejects_truncated_archives(): void
+    {
+        $path = $this->safeZip($this->directory.'/truncated.zip');
+        file_put_contents($path, substr(file_get_contents($path), 0, -12));
+
+        $this->assertFalse((new ArchiveSafetyChecker)->isSafe($path));
+    }
+
+    public function test_rejects_corrupt_nested_archives_even_when_renamed(): void
+    {
+        foreach (['broken.zip', 'broken.bin'] as $name) {
+            $path = $this->makeZip($this->directory.'/corrupt.zip', function (ZipArchive $zip) use ($name) {
+                $zip->addFromString($name, "PK\x03\x04invalid zip data");
+            });
+            $this->assertFalse((new ArchiveSafetyChecker)->isSafe($path), $name);
+        }
+    }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function test_failed_extraction_write_removes_partial_output(): void
+    {
+        require __DIR__.'/Fixtures/failed-writes.php';
+        $worker = new class { use SafeExtractsZips; };
+        $path = $this->safeZip($this->directory.'/safe.zip');
+        $this->expectException(UnsafeArchiveException::class);
+        $this->expectExceptionMessage('Could not write extracted entry');
+
+        try {
+            $worker->extractSafely($path, $this->directory.'/output');
+        } finally {
+            $this->assertFileDoesNotExist($this->directory.'/output/hello.txt');
+        }
+    }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function test_failed_nested_write_removes_temporary_file(): void
+    {
+        require __DIR__.'/Fixtures/failed-writes.php';
+        $inner = $this->safeZip($this->directory.'/inner.zip');
+        $outer = $this->makeZip($this->directory.'/outer.zip', function (ZipArchive $zip) use ($inner) {
+            $zip->addFile($inner, 'inner.zip');
+        });
+        $before = glob(sys_get_temp_dir().'/zbg-nested-*');
+        $this->expectException(UnsafeArchiveException::class);
+        $this->expectExceptionMessage('Could not write temporary file');
+
+        try {
+            (new ArchiveSafetyChecker)->assertSafe($outer);
+        } finally {
+            $this->assertSame($before, glob(sys_get_temp_dir().'/zbg-nested-*'));
         }
     }
 }

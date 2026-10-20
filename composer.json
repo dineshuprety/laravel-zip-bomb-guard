@@ -27,6 +27,12 @@
     }
   },
   "license": "MIT",
+  "homepage": "https://github.com/dineshuprety/laravel-zip-bomb-guard",
+  "keywords": ["laravel", "zip", "zip-bomb", "security", "validation"],
+  "support": {
+    "issues": "https://github.com/dineshuprety/laravel-zip-bomb-guard/issues",
+    "source": "https://github.com/dineshuprety/laravel-zip-bomb-guard"
+  },
   "minimum-stability": "stable",
   "name": "dineshuprety/laravel-zip-bomb-guard",
   "require": {

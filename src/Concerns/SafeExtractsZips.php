@@ -103,7 +103,7 @@ trait SafeExtractsZips
                 // the ceiling is hit, no matter what the headers claimed.
                 try {
                     while (! feof($stream)) {
-                        $chunk = fread($stream, 8192);
+                        $chunk = @fread($stream, 8192);
 
                         if ($chunk === false || ($chunk === '' && ! feof($stream))) {
                             throw new UnsafeArchiveException("Could not read entry from archive: {$name}");
@@ -115,7 +115,7 @@ trait SafeExtractsZips
                             throw new UnsafeArchiveException('Extraction exceeded the safe size limit.');
                         }
 
-                        if (fwrite($handle, $chunk) !== strlen($chunk)) {
+                        if (@fwrite($handle, $chunk) !== strlen($chunk)) {
                             throw new UnsafeArchiveException("Could not write extracted entry: {$name}");
                         }
                     }

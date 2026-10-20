@@ -35,8 +35,12 @@ jobs:
 
       - name: Install dependencies
         run: |
+          composer validate --strict
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --no-interaction --prefer-dist
 
+      - name: Audit dependencies
+        run: composer audit
+
       - name: Run tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --fail-on-warning --fail-on-risky

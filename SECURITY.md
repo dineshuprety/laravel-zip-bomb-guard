@@ -4,7 +4,7 @@
 
 This package exists to stop archive-based attacks, so its own security matters more than most. If you find a vulnerability, **do not open a public issue**.
 
-Email **codewithdinesh@gmail.com** with:
+Use [GitHub private vulnerability reporting](https://github.com/dineshuprety/laravel-zip-bomb-guard/security/advisories/new), or email **codewithdinesh@gmail.com**, with:
 
 - a description of the vulnerability,
 - steps to reproduce (a proof-of-concept archive is ideal),
