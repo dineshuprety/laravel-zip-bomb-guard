@@ -1,0 +1,5 @@
+interface:
+  display_name: "Zip Bomb Guard Maintainer"
+  short_description: "Maintain archive guards, tests, and package releases"
+  brand_color: "#0F766E"
+  default_prompt: "Use $zip-bomb-guard-maintainer to make a focused change to this package and verify the affected security contract."

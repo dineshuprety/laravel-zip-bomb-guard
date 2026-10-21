@@ -7,6 +7,8 @@
 - Contributor, support, and conduct guidelines, plus public issue forms and a pull request template.
 - Guides for application usage, extraction cleanup, configuration, troubleshooting, and release maintenance.
 - Documentation navigation and a live test-status badge in the README.
+- An editable architecture diagram and guide covering shared budgets, component boundaries, and failure cleanup.
+- A repository-scoped maintainer skill for coding assistants.
 
 ## [1.0.0] - 2026-10-20
 

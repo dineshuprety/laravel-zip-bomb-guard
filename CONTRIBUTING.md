@@ -22,6 +22,8 @@ This is a package, not a Laravel application. Orchestra Testbench supplies the L
 
 ## Find the relevant code
 
+Read [the architecture guide](docs/architecture.md) for component boundaries and cleanup responsibilities. The editable diagram source is [docs/architecture.svg](docs/architecture.svg).
+
 | Area | Location |
 | --- | --- |
 | Archive inspection and recursive budgets | [src/ArchiveSafetyChecker.php](src/ArchiveSafetyChecker.php) |
@@ -42,6 +44,12 @@ This is a package, not a Laravel application. Orchestra Testbench supplies the L
 - Update affected examples and add a concise entry under `Unreleased` in [CHANGELOG.md](CHANGELOG.md).
 
 Documentation-only changes do not need new behavior tests. Check commands, links, and code examples instead.
+
+## Project skill for coding assistants
+
+This repository includes [zip-bomb-guard-maintainer](.agents/skills/zip-bomb-guard-maintainer/SKILL.md), an instruction-only skill covering the architecture, security invariants, verification, and requested release work. Open the package checkout as your working folder so Codex can discover `.agents/skills`, following [the documented repository skill layout](https://developers.openai.com/codex/skills/).
+
+Example request: `Use $zip-bomb-guard-maintainer to fix nested archive accounting and add a regression test.` Other assistants can read the same `SKILL.md` directly. The skill does not authorize publishing or grant account access.
 
 ## Verify your change
 

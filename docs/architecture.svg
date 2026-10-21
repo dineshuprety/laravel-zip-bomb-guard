@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="850" viewBox="0 0 1440 850" role="img" aria-labelledby="title description">
+  <title id="title">Laravel Zip Bomb Guard architecture</title>
+  <desc id="description">Laravel entry points call ArchiveSafetyChecker. Each scan shares byte and entry limits throughout nested archives. Passing inspection permits optional guarded extraction. Rejections stop processing. Failed extraction removes the current partial file; the caller discards the destination.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#526579"/></marker>
+    <marker id="rejectArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#B33B45"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172C43; }
+      .title { font-size: 36px; font-weight: 700; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; }
+      .muted { fill: #526579; }
+      .label { font-size: 14px; font-weight: 700; letter-spacing: 2px; fill: #0F766E; }
+      .line { fill: none; stroke: #526579; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1440" height="850" rx="20" fill="#F6F8FB"/>
+  <text x="48" y="66" class="title">Laravel Zip Bomb Guard</text>
+  <text x="48" y="104" class="body muted">Inspect the archive tree. Extract only after the checks pass.</text>
+
+  <rect x="48" y="150" width="300" height="242" rx="16" fill="#FFFFFF" stroke="#CED8E2"/>
+  <text x="72" y="184" class="label">01 / ENTRY POINTS</text>
+  <text x="72" y="223" class="heading">Laravel adapters</text>
+  <text x="72" y="263" class="body">Upload validation rules</text>
+  <text x="72" y="295" class="body">Facade or checker calls</text>
+  <text x="72" y="327" class="body">Artisan archive scanning</text>
+  <text x="72" y="366" class="small muted">Resolve the configured checker</text>
+  <path d="M348 246 H400" class="line"/>
+
+  <rect x="408" y="150" width="570" height="300" rx="16" fill="#FFFFFF" stroke="#0F766E" stroke-width="2"/>
+  <text x="436" y="184" class="label">02 / INSPECTION</text>
+  <text x="436" y="223" class="heading">ArchiveSafetyChecker</text>
+  <text x="436" y="263" class="body">Paths · duplicates · encryption · symlinks</text>
+  <text x="436" y="295" class="body">Extensions · declared bytes · ratio · nesting</text>
+  <rect x="432" y="320" width="522" height="106" rx="10" fill="#E8F5F1"/>
+  <text x="452" y="352" class="body" font-weight="700">Nested ZIPs reuse the same budgets</text>
+  <text x="452" y="381" class="small">Recognize extension / signature; stream to bounded temp.</text>
+  <text x="452" y="408" class="small">Inspect recursively; close and remove temp files.</text>
+
+  <path d="M978 216 H1032" class="line"/>
+  <rect x="1040" y="150" width="352" height="132" rx="16" fill="#E8F5F1" stroke="#9DCAC0"/>
+  <text x="1064" y="184" class="label">CHECKS PASS</text>
+  <text x="1064" y="222" class="heading">Return to the caller</text>
+  <text x="1064" y="255" class="small">Validation / scan can end here.</text>
+
+  <path d="M978 396 H1032" fill="none" stroke="#B33B45" stroke-width="2" marker-end="url(#rejectArrow)"/>
+  <rect x="1040" y="332" width="352" height="118" rx="16" fill="#FFF0F0" stroke="#E4B4B9"/>
+  <text x="1064" y="367" class="label" style="fill:#A22E3B">ANY CHECK FAILS</text>
+  <text x="1064" y="400" class="body" font-weight="700">UnsafeArchiveException</text>
+  <text x="1064" y="429" class="small">Reject input and stop processing.</text>
+
+  <rect x="48" y="500" width="300" height="220" rx="16" fill="#172C43"/>
+  <text x="72" y="538" class="heading" style="fill:#FFFFFF">One archive tree</text>
+  <text x="72" y="578" class="body" style="fill:#DCE8EF">Shared bytes + entry count</text>
+  <text x="72" y="610" class="body" style="fill:#DCE8EF">Containers also count</text>
+  <text x="72" y="642" class="body" style="fill:#DCE8EF">Depth overflow rejects</text>
+  <text x="72" y="688" class="small" style="fill:#A9CBC7">Fresh budgets for the next scan</text>
+
+  <path d="M1392 216 H1416 V500 H1200 V532" class="line"/>
+  <text x="1050" y="492" class="small muted">Optional extraction after inspection</text>
+  <rect x="408" y="540" width="984" height="180" rx="16" fill="#FFFFFF" stroke="#CED8E2"/>
+  <text x="436" y="575" class="label">03 / GUARDED WRITES</text>
+  <text x="436" y="614" class="heading">SafeExtractsZips</text>
+  <text x="436" y="653" class="body">Check paths + parent symlinks · create files exclusively · cap actual streamed bytes</text>
+  <text x="436" y="690" class="small muted">Outer entries only. On write failure: remove current partial file; caller discards destination.</text>
+
+  <path d="M48 758 H1392" stroke="#CED8E2"/>
+  <text x="48" y="794" class="small muted">Use a fresh private destination and an unchanged source. Enforce worker time, memory, and disk limits.</text>
+  <text x="48" y="822" class="small muted">Passing inspection is not a malware verdict or a full integrity check of ordinary files.</text>
+</svg>

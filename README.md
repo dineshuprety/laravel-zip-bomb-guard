@@ -10,6 +10,7 @@ Use it to validate ZIP uploads, inspect export bundles, and extract archives in 
 
 - [Usage guide](docs/usage.md): upload validation, extraction cleanup, and CLI exit codes.
 - [Configuration and troubleshooting](docs/configuration.md): environment variables, shared budgets, and inspection limits.
+- [Architecture](docs/architecture.md): component boundaries, shared budgets, and failure cleanup.
 - [Contributing](CONTRIBUTING.md): development setup, regression tests, and pull requests.
 - [Support](SUPPORT.md), [security reporting](SECURITY.md), and [Code of Conduct](CODE_OF_CONDUCT.md).
 - [Maintainer guide](docs/maintaining.md): reviewed releases, immutable tags, and Packagist registration.
@@ -18,7 +19,7 @@ Use it to validate ZIP uploads, inspect export bundles, and extract archives in 
 
 ## How it works
 
-![Architecture](docs/architecture.png)
+![Archive inspection, shared nested budgets, and optional guarded extraction](docs/architecture.svg)
 
 Every entry point — an upload form, an export job, or a queue worker — passes through the same engine: `ArchiveSafetyChecker`. It checks entry metadata from the ZIP central directory and reads a short prefix of unencrypted files to recognize renamed ZIPs. Nested archives are decompressed to temporary files under the byte cap and checked recursively. File and byte budgets are shared across the entire archive tree and reset for each top-level scan. The first failed check throws `UnsafeArchiveException`; archives deeper than the configured limit are rejected.
 
