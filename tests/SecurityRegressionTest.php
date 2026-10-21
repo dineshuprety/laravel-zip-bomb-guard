@@ -1,11 +1,11 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Tests;
+namespace ZipBombGuard\Tests;
 
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Concerns\SafeExtractsZips;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
-use DineshUprety\ZipBombGuard\Rules\NoZipBomb;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Concerns\SafeExtractsZips;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\Rules\NoZipBomb;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;

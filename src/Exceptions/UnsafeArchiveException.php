@@ -1,6 +1,6 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Exceptions;
+namespace ZipBombGuard\Exceptions;
 
 use RuntimeException;
 

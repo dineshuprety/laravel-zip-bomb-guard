@@ -7,11 +7,14 @@ Guard your Laravel app against **zip bombs** (decompression bombs), **zip-slip**
 
 Use it to validate ZIP uploads, inspect export bundles, and extract archives in queue workers with configurable limits.
 
+Contributions are welcome: bug reports, documentation, tests, and code improvements all help. Package code uses the project namespace `ZipBombGuard\`. See [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
+
 ## Documentation
 
 - [Usage guide](docs/usage.md): upload validation, extraction cleanup, and CLI exit codes.
 - [Configuration and troubleshooting](docs/configuration.md): environment variables, shared budgets, and inspection limits.
 - [Architecture](docs/architecture.md): component boundaries, shared budgets, and failure cleanup.
+- [Upgrading from 1.x to 2.x](docs/upgrading.md): migrate PHP imports to the project namespace.
 - [Contributing](CONTRIBUTING.md): development setup, regression tests, and pull requests.
 - [Support](SUPPORT.md), [security reporting](SECURITY.md), and [Code of Conduct](CODE_OF_CONDUCT.md).
 - [Maintainer guide](docs/maintaining.md): reviewed releases, immutable tags, and Packagist registration.
@@ -36,7 +39,7 @@ Every entry point — an upload form, an export job, or a queue worker — passe
 Install the stable release from [Packagist](https://packagist.org/packages/dineshuprety/laravel-zip-bomb-guard):
 
 ```bash
-composer require dineshuprety/laravel-zip-bomb-guard:^1.0.1
+composer require dineshuprety/laravel-zip-bomb-guard:^2.0
 ```
 
 The service provider and the `ZipBombGuard` facade auto-register. Optionally publish the config:
@@ -44,6 +47,8 @@ The service provider and the `ZipBombGuard` facade auto-register. Optionally pub
 ```bash
 php artisan vendor:publish --tag=zip-bomb-guard-config
 ```
+
+Version 2 uses the `ZipBombGuard\` PHP namespace. Existing 1.x applications should follow the [upgrade guide](docs/upgrading.md) before changing their Composer constraint.
 
 If you previously added this package as a GitHub VCS repository, you can remove that override with `composer config --unset repositories.zip-bomb-guard`.
 
@@ -54,7 +59,7 @@ If you previously added this package as a GitHub VCS repository, you can remove 
 ### 1. Facade
 
 ```php
-use ZipBombGuard;
+use ZipBombGuard\Facades\ZipBombGuard;
 
 ZipBombGuard::assertSafe($archivePath); // throws UnsafeArchiveException if a safety check fails
 ZipBombGuard::isSafe($archivePath);     // true / false
@@ -75,7 +80,7 @@ $request->validate([
 For FormRequests and explicit rule arrays:
 
 ```php
-use DineshUprety\ZipBombGuard\Rules\NoZipBomb;
+use ZipBombGuard\Rules\NoZipBomb;
 
 public function rules(): array
 {
@@ -90,8 +95,8 @@ An archive that fails a check is rejected with a validation message. PHP may alr
 ### 4. Check any archive in code
 
 ```php
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
 
 $checker = app(ArchiveSafetyChecker::class); // limits from config
 
@@ -106,7 +111,7 @@ try {
 ### 5. Extract safely in jobs
 
 ```php
-use DineshUprety\ZipBombGuard\Concerns\SafeExtractsZips;
+use ZipBombGuard\Concerns\SafeExtractsZips;
 
 class ProcessExportArchive implements ShouldQueue
 {

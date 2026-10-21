@@ -1,8 +1,8 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Tests;
+namespace ZipBombGuard\Tests;
 
-use DineshUprety\ZipBombGuard\ZipBombGuardServiceProvider;
+use ZipBombGuard\ZipBombGuardServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use ZipArchive;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Tests;
+namespace ZipBombGuard\Tests;
 
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Concerns\SafeExtractsZips;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
-use DineshUprety\ZipBombGuard\Rules;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Concerns\SafeExtractsZips;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\Rules;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use ZipArchive;
@@ -154,7 +154,7 @@ class ArchiveSafetyCheckerTest extends TestCase
     {
         $this->assertInstanceOf(
             ArchiveSafetyChecker::class,
-            \DineshUprety\ZipBombGuard\Facades\ZipBombGuard::getFacadeRoot()
+            \ZipBombGuard\Facades\ZipBombGuard::getFacadeRoot()
         );
     }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Concerns;
+namespace ZipBombGuard\Concerns;
 
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
 use ZipArchive;
 
 /**

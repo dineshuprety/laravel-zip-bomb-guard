@@ -7,22 +7,22 @@
   ],
   "autoload": {
     "psr-4": {
-      "DineshUprety\\ZipBombGuard\\": "src/"
+      "ZipBombGuard\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "DineshUprety\\ZipBombGuard\\Tests\\": "tests/"
+      "ZipBombGuard\\Tests\\": "tests/"
     }
   },
   "description": "Guard your Laravel app against zip bombs (decompression bombs) and zip-slip attacks: inspect any archive before you extract it.",
   "extra": {
     "laravel": {
       "providers": [
-        "DineshUprety\\ZipBombGuard\\ZipBombGuardServiceProvider"
+        "ZipBombGuard\\ZipBombGuardServiceProvider"
       ],
       "aliases": {
-        "ZipBombGuard": "DineshUprety\\ZipBombGuard\\Facades\\ZipBombGuard"
+        "ZipBombGuard": "ZipBombGuard\\Facades\\ZipBombGuard"
       }
     }
   },

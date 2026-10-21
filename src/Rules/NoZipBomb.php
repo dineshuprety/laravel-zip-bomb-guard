@@ -1,10 +1,10 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Rules;
+namespace ZipBombGuard\Rules;
 
 use Closure;
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Symfony\Component\HttpFoundation\File\File;
 

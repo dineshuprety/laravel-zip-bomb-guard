@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-21
+
+### Changed
+
+- **Breaking:** move all public PHP classes and the extraction trait from `DineshUprety\ZipBombGuard\` to the project namespace `ZipBombGuard\`. Old fully qualified names are not aliased.
+- Update Composer autoloading, Laravel discovery metadata, tests, fixtures, and usage examples for the new namespace.
+- Make the shared project namespace explicit in contributor and coding-assistant guidance.
+
+### Added
+
+- A [1.x to 2.x upgrade guide](docs/upgrading.md) covering imports, explicit provider registration, container bindings, and Laravel caches.
+
+### Compatibility
+
+- The Composer package name remains `dineshuprety/laravel-zip-bomb-guard`. PHP/Laravel requirements, configuration keys, validation rule name, Artisan command, and archive safety behavior are unchanged.
+- Existing 1.x tags remain available. Upgrade applications' class references before selecting `^2.0`.
+
 ## [1.0.1] - 2026-10-21
 
 ### Fixed
@@ -48,5 +65,6 @@ Initial public tagged release.
 - The initial development snapshot used per-archive byte and file limits. The release shares these limits across the full nested tree, including container entries, and may reject archives that previously passed.
 - Extraction rejects existing output files. Use a fresh private destination and discard it after a failed extraction.
 
+[2.0.0]: https://github.com/dineshuprety/laravel-zip-bomb-guard/releases/tag/v2.0.0
 [1.0.1]: https://github.com/dineshuprety/laravel-zip-bomb-guard/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dineshuprety/laravel-zip-bomb-guard/releases/tag/v1.0.0

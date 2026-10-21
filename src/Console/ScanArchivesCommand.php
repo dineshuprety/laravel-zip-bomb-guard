@@ -1,9 +1,9 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard\Console;
+namespace ZipBombGuard\Console;
 
-use DineshUprety\ZipBombGuard\ArchiveSafetyChecker;
-use DineshUprety\ZipBombGuard\Exceptions\UnsafeArchiveException;
+use ZipBombGuard\ArchiveSafetyChecker;
+use ZipBombGuard\Exceptions\UnsafeArchiveException;
 use Illuminate\Console\Command;
 use Symfony\Component\Finder\Finder;
 

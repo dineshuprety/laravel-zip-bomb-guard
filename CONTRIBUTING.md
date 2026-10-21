@@ -2,6 +2,8 @@
 
 Small bug fixes, reproducible reports, clearer examples, and documentation improvements are welcome. Start with [support](SUPPORT.md) if you are unsure whether a behavior is a bug. Follow the [Code of Conduct](CODE_OF_CONDUCT.md) when participating.
 
+You do not need to know the maintainer or have contributed before. Code lives under the shared project namespace `ZipBombGuard\`; contributors use the same namespace regardless of who writes a change.
+
 **Report security bypasses privately through [SECURITY.md](SECURITY.md).** Do not disclose an unpatched bypass in a public issue or pull request.
 
 ## Set up a development checkout
@@ -36,7 +38,7 @@ Read [the architecture guide](docs/architecture.md) for component boundaries and
 
 ## Make a focused change
 
-- Keep the existing namespace, style, and supported PHP versions. Avoid adding dependencies for small helpers.
+- Use the `ZipBombGuard\` namespace (`ZipBombGuard\Tests\` for tests), existing style, and supported PHP versions. Avoid adding dependencies for small helpers.
 - For a bug fix, add a small regression test that fails before the fix and passes afterward.
 - Preserve shared budgets, depth limits, path checks, resource cleanup, and failure handling when changing inspection or extraction.
 - Generate small synthetic archives in tests. Do not commit real attack archives, personal uploads, credentials, or large compressed payloads.

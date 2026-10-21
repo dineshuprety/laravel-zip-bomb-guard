@@ -19,7 +19,7 @@ Resolve `$checker` with `app(ArchiveSafetyChecker::class)` and import the checke
 Inside a controller action that receives an `Illuminate\Http\Request` named `$request`:
 
 ```php
-use DineshUprety\ZipBombGuard\Rules\NoZipBomb;
+use ZipBombGuard\Rules\NoZipBomb;
 
 $request->validate([
     'archive' => ['required', 'file', 'mimes:zip', 'max:10240', new NoZipBomb],
@@ -37,7 +37,7 @@ If a queue worker will process the file later, store it on private local storage
 The helper below accepts a local archive path and returns a new extraction directory. Call it from your application's service or job after applying its access rules:
 
 ```php
-use DineshUprety\ZipBombGuard\Concerns\SafeExtractsZips;
+use ZipBombGuard\Concerns\SafeExtractsZips;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 

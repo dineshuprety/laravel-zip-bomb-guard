@@ -7,6 +7,8 @@ description: Maintain dineshuprety/laravel-zip-bomb-guard. Use for changes to th
 
 Work from this package's repository root, three directories above this skill. Confirm `composer.json` names `dineshuprety/laravel-zip-bomb-guard` before running commands. This is a library; run Artisan examples in a consuming Laravel application, not this checkout.
 
+Version 2 uses the project namespace `ZipBombGuard\`, with tests under `ZipBombGuard\Tests\`. Preserve it for all contributors. The Composer vendor name is separate from PHP namespaces; see [the 1.x migration guide](../../../docs/upgrading.md) for legacy imports.
+
 ## Choose the affected boundary
 
 Read [the architecture](../../../docs/architecture.md) and only the relevant source and tests. Search callers before changing a public method or configuration key.

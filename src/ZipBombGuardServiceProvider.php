@@ -1,6 +1,6 @@
 <?php
 
-namespace DineshUprety\ZipBombGuard;
+namespace ZipBombGuard;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;

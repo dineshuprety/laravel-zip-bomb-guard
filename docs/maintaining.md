@@ -28,10 +28,10 @@ git diff --check
 
 ## Tag the tested commit
 
-The following is an example for a future `v1.0.2` release, not a tag to run unchanged. Set the next unused version and the full commit SHA that passed CI. Save the reviewed release notes to a local file first.
+The following is an example for a future `v2.0.1` release, not a tag to run unchanged. Set the next unused version and the full commit SHA that passed CI. Save the reviewed release notes to a local file first.
 
 ```bash
-release_tag=v1.0.2
+release_tag=v2.0.1
 release_commit=FULL_TESTED_COMMIT_SHA
 git tag -a "$release_tag" "$release_commit" -m "$release_tag"
 git push origin "$release_tag"
