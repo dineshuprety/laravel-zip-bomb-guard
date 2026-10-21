@@ -48,7 +48,9 @@ Verify the published release and tag point to the tested commit. Treat published
 
 The package is registered as [dineshuprety/laravel-zip-bomb-guard](https://packagist.org/packages/dineshuprety/laravel-zip-bomb-guard). Version `v1.0.0` was published on 2026-10-21.
 
-At registration, automatic updates were not configured. Until that changes, sign in to the package page and use its update action after pushing a release or README changes. Check that the expected version and commit are visible. Automatic updates can be configured through [Packagist's documented GitHub integration](https://packagist.org/about#how-to-update-packages); keep integration tokens out of the repository, issue reports, and release notes.
+A GitHub webhook automatically updates Packagist on pushes, including new release tags. It uses JSON payloads, HTTPS verification, and the Packagist safe API token as its signing secret, following [Packagist's documented GitHub integration](https://packagist.org/about#how-to-update-packages). Keep integration tokens out of the repository, issue reports, and release notes.
+
+After pushing, check that the expected version and commit appear on Packagist. If an update is missing, inspect recent deliveries under the repository's **Settings → Webhooks** and retry a failed delivery after fixing the cause. The package page's update action remains a manual fallback. If the Packagist API tokens are rotated, update the webhook's secret too.
 
 Consumers install through the default Composer registry:
 
