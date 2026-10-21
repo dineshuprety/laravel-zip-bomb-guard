@@ -1,8 +1,18 @@
 # Laravel Zip Bomb Guard
 
+[![Tests](https://github.com/dineshuprety/laravel-zip-bomb-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/dineshuprety/laravel-zip-bomb-guard/actions/workflows/tests.yml)
+
 Guard your Laravel app against **zip bombs** (decompression bombs), **zip-slip** path traversal, malicious **symlinks**, **nested bombs**, **encrypted payloads**, **duplicate-file swaps**, and **blocked executable extensions** — inspect ZIP-based archives *before* you extract them.
 
 Use it to validate ZIP uploads, inspect export bundles, and extract archives in queue workers with configurable limits.
+
+## Documentation
+
+- [Usage guide](docs/usage.md): upload validation, extraction cleanup, and CLI exit codes.
+- [Configuration and troubleshooting](docs/configuration.md): environment variables, shared budgets, and inspection limits.
+- [Contributing](CONTRIBUTING.md): development setup, regression tests, and pull requests.
+- [Support](SUPPORT.md), [security reporting](SECURITY.md), and [Code of Conduct](CODE_OF_CONDUCT.md).
+- [Maintainer guide](docs/maintaining.md): reviewed releases, immutable tags, and Packagist registration.
 
 ---
 
@@ -140,7 +150,7 @@ Scans one archive or every `.zip`/`.jar`/`.war`/`.docx`/`.xlsx`/`.pptx` in a dir
 
 | Key | Default | Meaning |
 |---|---|---|
-| `max_total_bytes` | 100 MB | Sum of declared uncompressed sizes across the entire nested tree, including ZIP container entries |
+| `max_total_bytes` | 100 MiB | Sum of declared uncompressed sizes across the entire nested tree, including ZIP container entries |
 | `max_files` | 1000 | Total entry count across the entire nested tree |
 | `max_ratio` | 20 | Uncompressed : compressed ratio per entry |
 | `max_nesting_depth` | 3 | Maximum nested depth; deeper archives are rejected (0 rejects all nested archives) |
@@ -167,4 +177,4 @@ Tests cover safe and unsafe archives, shared recursive budgets, renamed nested Z
 
 ## License
 
-MIT
+[MIT](LICENSE)

@@ -1,0 +1,26 @@
+name: Feature request
+description: Describe a concrete use case or improvement.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues first. If the request reveals a security bypass, use [private vulnerability reporting](https://github.com/dineshuprety/laravel-zip-bomb-guard/security/advisories/new).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Who needs this and what cannot be done with the current package?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior
+      description: Describe the expected result. An example API or usage snippet is helpful but optional.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and tradeoffs
+      description: Mention existing configuration or application-level solutions you tried, and any security or compatibility implications.

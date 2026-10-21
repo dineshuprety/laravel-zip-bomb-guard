@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible behavior or documentation problem.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For a security bypass, stop here and use [private vulnerability reporting](https://github.com/dineshuprety/laravel-zip-bomb-guard/security/advisories/new).
+        Do not attach real attack archives, credentials, personal uploads, or complete .env files.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: Explain what you expected, what happened, and any error message.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the steps and a small, harmless example or a link to the documentation that needs correction.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include package, PHP, Laravel, libzip, and operating system versions. Use N/A for documentation-only reports.
+    validations:
+      required: true
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Relevant configuration
+      description: Include only the guard settings related to the problem, with sensitive data removed.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Contributor, support, and conduct guidelines, plus public issue forms and a pull request template.
+- Guides for application usage, extraction cleanup, configuration, troubleshooting, and release maintenance.
+- Documentation navigation and a live test-status badge in the README.
+
 ## [1.0.0] - 2026-10-20
 
 Initial public tagged release.
