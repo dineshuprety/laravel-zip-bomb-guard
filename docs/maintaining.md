@@ -28,10 +28,10 @@ git diff --check
 
 ## Tag the tested commit
 
-The following is an example for a future `v1.0.1` release, not a tag to run unchanged. Set the next unused version and the full commit SHA that passed CI. Save the reviewed release notes to a local file first.
+The following is an example for a future `v1.0.2` release, not a tag to run unchanged. Set the next unused version and the full commit SHA that passed CI. Save the reviewed release notes to a local file first.
 
 ```bash
-release_tag=v1.0.1
+release_tag=v1.0.2
 release_commit=FULL_TESTED_COMMIT_SHA
 git tag -a "$release_tag" "$release_commit" -m "$release_tag"
 git push origin "$release_tag"
@@ -44,20 +44,16 @@ gh release create "$release_tag" \
 
 Verify the published release and tag point to the tested commit. Treat published tags as immutable: issue a new version for a correction rather than moving a tag that consumers may have installed. Keep the Composer version derived from Git tags; do not add a hard-coded `version` field to `composer.json`.
 
-## Packagist registration and updates
+## Packagist updates
 
-Registration is a separate maintainer action. If the package is not yet registered, sign in to [Packagist](https://packagist.org), use [Submit](https://packagist.org/packages/submit), and enter this public repository URL:
+The package is registered as [dineshuprety/laravel-zip-bomb-guard](https://packagist.org/packages/dineshuprety/laravel-zip-bomb-guard). Version `v1.0.0` was published on 2026-10-21.
 
-```text
-https://github.com/dineshuprety/laravel-zip-bomb-guard
-```
+At registration, automatic updates were not configured. Until that changes, sign in to the package page and use its update action after pushing a release or README changes. Check that the expected version and commit are visible. Automatic updates can be configured through [Packagist's documented GitHub integration](https://packagist.org/about#how-to-update-packages); keep integration tokens out of the repository, issue reports, and release notes.
 
-Check that Packagist imports the package name from `composer.json` and the expected release tag. Configure automatic updates using [Packagist's documented GitHub integration](https://packagist.org/about#how-to-update-packages), or trigger an update after releases. Keep any integration token out of the repository, issue reports, and release notes.
-
-Once registration is verified, update the README installation section so new consumers can use:
+Consumers install through the default Composer registry:
 
 ```bash
 composer require dineshuprety/laravel-zip-bomb-guard
 ```
 
-Verify installation in a fresh supported Laravel application. Do not claim Packagist availability until the package and release are visible there. Until then, retain the GitHub VCS installation instructions.
+Verify installation in a fresh supported Laravel application. Do not announce a new version until it is visible on Packagist and resolves through Composer. Existing installations with a custom VCS repository can remove that override as described in the [installation guide](../README.md#install).

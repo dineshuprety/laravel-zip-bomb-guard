@@ -1,6 +1,7 @@
 # Laravel Zip Bomb Guard
 
 [![Tests](https://github.com/dineshuprety/laravel-zip-bomb-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/dineshuprety/laravel-zip-bomb-guard/actions/workflows/tests.yml)
+[![Packagist version](https://img.shields.io/packagist/v/dineshuprety/laravel-zip-bomb-guard)](https://packagist.org/packages/dineshuprety/laravel-zip-bomb-guard)
 
 Guard your Laravel app against **zip bombs** (decompression bombs), **zip-slip** path traversal, malicious **symlinks**, **nested bombs**, **encrypted payloads**, **duplicate-file swaps**, and **blocked executable extensions** — inspect ZIP-based archives *before* you extract them.
 
@@ -32,11 +33,10 @@ Every entry point — an upload form, an export job, or a queue worker — passe
 
 ## Install
 
-Install the tagged release directly from this GitHub repository until the package is registered on Packagist:
+Install the stable release from [Packagist](https://packagist.org/packages/dineshuprety/laravel-zip-bomb-guard):
 
 ```bash
-composer config repositories.zip-bomb-guard vcs https://github.com/dineshuprety/laravel-zip-bomb-guard
-composer require dineshuprety/laravel-zip-bomb-guard:^1.0
+composer require dineshuprety/laravel-zip-bomb-guard:^1.0.1
 ```
 
 The service provider and the `ZipBombGuard` facade auto-register. Optionally publish the config:
@@ -45,7 +45,7 @@ The service provider and the `ZipBombGuard` facade auto-register. Optionally pub
 php artisan vendor:publish --tag=zip-bomb-guard-config
 ```
 
-After Packagist registration, new projects can omit the `composer config repositories...` command.
+If you previously added this package as a GitHub VCS repository, you can remove that override with `composer config --unset repositories.zip-bomb-guard`.
 
 ---
 

@@ -29,6 +29,22 @@ class SecurityRegressionTest extends TestCase
         parent::tearDown();
     }
 
+    public function test_scan_command_recursively_selects_archive_extensions(): void
+    {
+        mkdir($this->directory.'/nested');
+        $this->safeZip($this->directory.'/safe.zip');
+        $this->makeZip($this->directory.'/nested/blocked.jar', function (ZipArchive $zip) {
+            $zip->addFromString('blocked.php', 'test fixture');
+        });
+        file_put_contents($this->directory.'/nested/ignored.txt', 'not an archive');
+
+        $this->artisan('zip-bomb:scan', [
+            'path' => $this->directory,
+            '--fail-on-unsafe' => true,
+        ])->expectsOutput('Checked 2 archive(s): 1 unsafe.')
+            ->assertExitCode(1);
+    }
+
     public function test_rejects_unix_symlinks(): void
     {
         $path = $this->makeZip($this->directory.'/link.zip', function (ZipArchive $zip) {

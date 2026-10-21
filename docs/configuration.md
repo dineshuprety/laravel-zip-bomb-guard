@@ -47,7 +47,7 @@ The budgets are shared by siblings and descendants, and reset for each top-level
 
 | Symptom | Check |
 | --- | --- |
-| Composer cannot find the package | Add the GitHub VCS repository from the [installation guide](../README.md#install) if it is not yet registered on Packagist. |
+| Composer cannot find the package | Confirm the name is `dineshuprety/laravel-zip-bomb-guard`, Packagist is enabled in your Composer configuration, and PHP/Laravel meet the [requirements](../README.md#requirements). |
 | `ZipArchive` is missing | Enable `ext-zip` for the PHP binary running the command or worker. CLI PHP and web-server PHP can use different configurations. |
 | Rule or Artisan command is missing | Install the package in the Laravel application and check that package discovery is not disabled for it. |
 | Configuration changes appear ignored | Rebuild the application configuration cache and restart long-running workers; do not reuse an already-resolved checker after changing its settings. |

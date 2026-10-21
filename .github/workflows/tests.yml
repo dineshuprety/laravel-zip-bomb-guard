@@ -39,6 +39,10 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --no-interaction --prefer-dist
 
+      - name: Verify Symfony Finder 8 compatibility
+        if: matrix.php == '8.5' && matrix.laravel == '13.*'
+        run: composer update "symfony/finder:^8.0" --no-interaction --prefer-dist
+
       - name: Audit dependencies
         run: composer audit
 

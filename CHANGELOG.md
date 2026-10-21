@@ -2,13 +2,21 @@
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-21
+
+### Fixed
+
+- Allow Symfony Finder 8 so the package installs into Laravel 13 applications that already use it, without downgrading that dependency.
+
 ### Added
 
+- Explicit Symfony Finder 8 CI coverage and a recursive directory-scanning test.
 - Contributor, support, and conduct guidelines, plus public issue forms and a pull request template.
 - Guides for application usage, extraction cleanup, configuration, troubleshooting, and release maintenance.
 - Documentation navigation and a live test-status badge in the README.
 - An editable architecture diagram and guide covering shared budgets, component boundaries, and failure cleanup.
 - A repository-scoped maintainer skill for coding assistants.
+- Packagist publication and standard Composer installation instructions.
 
 ## [1.0.0] - 2026-10-20
 
@@ -40,4 +48,5 @@ Initial public tagged release.
 - The initial development snapshot used per-archive byte and file limits. The release shares these limits across the full nested tree, including container entries, and may reject archives that previously passed.
 - Extraction rejects existing output files. Use a fresh private destination and discard it after a failed extraction.
 
+[1.0.1]: https://github.com/dineshuprety/laravel-zip-bomb-guard/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dineshuprety/laravel-zip-bomb-guard/releases/tag/v1.0.0
